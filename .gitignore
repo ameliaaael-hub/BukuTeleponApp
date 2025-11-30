@@ -1,15 +1,17 @@
+# File / Folder yang tidak perlu diupload ke GitHub
+
+# Ignore Android Studio caches and local settings
 *.iml
 .gradle
+.DS_Store
 /local.properties
 /.idea/caches
 /.idea/libraries
 /.idea/modules.xml
 /.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
+.cxx
+
+# Ignore Build Output Folders (WAJIB)
 /build
 /captures
 .externalNativeBuild
-.cxx
-local.properties

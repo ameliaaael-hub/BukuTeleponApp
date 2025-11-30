@@ -49,4 +49,9 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    // Library untuk load gambar dari URL
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+
+    implementation("it.xabaras.android:recyclerview-swipedecorator:1.4")
 }
