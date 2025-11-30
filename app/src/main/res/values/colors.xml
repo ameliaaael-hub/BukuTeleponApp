@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+
+    <color name="bg_screen">#F5F6F8</color> <color name="dark_green">#2E5B53</color> <color name="text_primary">#222222</color>
+    <color name="text_secondary">#888888</color>
+    <color name="input_bg">#F9F9F9</color>
+    <color name="input_stroke">#E0E0E0</color>
+   </resources>
+

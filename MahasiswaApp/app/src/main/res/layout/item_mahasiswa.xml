@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Nama Mahasiswa -->
+        <TextView
+            android:id="@+id/tv_nama"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nama Mahasiswa"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#212121"/>
+
+        <!-- NIM -->
+        <TextView
+            android:id="@+id/tv_nim"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="NIM: 123456789"
+            android:layout_marginTop="4dp"
+            android:textSize="14sp"
+            android:textColor="#757575"/>
+
+        <!-- Alamat -->
+        <TextView
+            android:id="@+id/tv_Alamat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Alamat: mahasiswa@example.com"
+            android:layout_marginTop="2dp"
+            android:textSize="14sp"
+            android:textColor="#757575"/>
+
+        <!-- Jurusan -->
+        <TextView
+            android:id="@+id/tv_jurusan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Jurusan: Teknik Informatika"
+            android:layout_marginTop="2dp"
+            android:textSize="14sp"
+            android:textColor="#757575"/>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
