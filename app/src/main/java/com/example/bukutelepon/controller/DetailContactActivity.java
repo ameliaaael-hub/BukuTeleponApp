@@ -61,7 +61,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-// Jika menggunakan library swipe decorator, import di sini. Jika tidak, hapus baris ini.
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
 
 public class DetailContactActivity extends AppCompatActivity implements LogAdapter.OnLogActionListener, ReminderAdapter.OnReminderActionListener {
@@ -71,7 +70,7 @@ public class DetailContactActivity extends AppCompatActivity implements LogAdapt
 
     private TextView tvDetailNama, tvDetailNomor, tvDetailEmail, tvDetailCatatan;
     private ImageView btnBack, btnAddLog, btnAddReminder, imgDetailPhoto;
-    private LinearLayout layoutActionCall, layoutActionEmail;
+    private LinearLayout layoutActionCall, layoutActionEmail, layoutActionWhatsApp; // Deklarasi Variabel
     private RecyclerView rvLogs, rvReminders;
 
     private Contact contact;
@@ -104,7 +103,7 @@ public class DetailContactActivity extends AppCompatActivity implements LogAdapt
             }
         }
 
-        // Init Views
+        // Init Views (Semua Variabel Harus Ada di Sini)
         tvDetailNama = findViewById(R.id.tvDetailNama);
         tvDetailNomor = findViewById(R.id.tvDetailNomor);
         tvDetailEmail = findViewById(R.id.tvDetailEmail);
@@ -113,6 +112,7 @@ public class DetailContactActivity extends AppCompatActivity implements LogAdapt
         btnBack = findViewById(R.id.btnBack);
         layoutActionCall = findViewById(R.id.layoutActionCall);
         layoutActionEmail = findViewById(R.id.layoutActionEmail);
+        layoutActionWhatsApp = findViewById(R.id.layoutActionWhatsApp); // Inisialisasi WhatsApp
         btnAddLog = findViewById(R.id.btnAddLog);
         btnAddReminder = findViewById(R.id.btnAddReminder);
         rvLogs = findViewById(R.id.rvLogs);
@@ -134,7 +134,7 @@ public class DetailContactActivity extends AppCompatActivity implements LogAdapt
             dbReminders = FirebaseDatabase.getInstance().getReference("reminders").child(userId).child(contact.getId());
         }
 
-        // Setup Adapters
+        // Setup Adapters (INISIALISASI LIST DI SINI)
         rvLogs.setLayoutManager(new LinearLayoutManager(this));
         logList = new ArrayList<>();
         logAdapter = new LogAdapter(logList, this);
@@ -336,11 +336,9 @@ public class DetailContactActivity extends AppCompatActivity implements LogAdapt
         }).show();
     }
 
-    // [FIXED] Implementasi Method yang hilang sebelumnya
     @Override
     public void onSelectionChanged(int count) {
         // Method ini diperlukan oleh Interface LogAdapter, tapi tidak dipakai di Detail Activity
-        // Biarkan kosong
     }
 
     private void setupActionButtons() {
@@ -348,6 +346,8 @@ public class DetailContactActivity extends AppCompatActivity implements LogAdapt
         layoutActionCall.setOnLongClickListener(v -> { copyToClipboard("Nomor", contact.getNomorTelepon()); return true; });
         layoutActionEmail.setOnClickListener(v -> sendEmail(contact.getEmail()));
         layoutActionEmail.setOnLongClickListener(v -> { copyToClipboard("Email", contact.getEmail()); return true; });
+        layoutActionWhatsApp.setOnClickListener(v -> sendWhatsAppMessage()); // WhatsApp Click
+        layoutActionWhatsApp.setOnLongClickListener(v -> { copyToClipboard("Nomor Telepon", contact.getNomorTelepon()); return true; }); // WhatsApp Long Click
     }
 
     private void checkPermissionAndCall() {
@@ -374,12 +374,18 @@ public class DetailContactActivity extends AppCompatActivity implements LogAdapt
 
     private void sendEmail(String email) {
         if(email==null || email.isEmpty()) { Toast.makeText(this,"Email kosong",Toast.LENGTH_SHORT).show(); return; }
-        try { startActivity(new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + email))); } catch (Exception e) {}
+        try {
+            Intent intent = new Intent(Intent.ACTION_SENDTO);
+            intent.setData(Uri.parse("mailto:" + email));
+            startActivity(intent);
+        } catch (Exception e) {
+            Toast.makeText(this, "Gagal membuka aplikasi email", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void copyToClipboard(String label, String text) {
         ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-        if(cm!=null) { cm.setPrimaryClip(ClipData.newPlainText(label, text)); Toast.makeText(this, "Disalin", Toast.LENGTH_SHORT).show(); }
+        if(cm!=null) { cm.setPrimaryClip(ClipData.newPlainText(label, text)); Toast.makeText(this, label + " disalin", Toast.LENGTH_SHORT).show(); }
     }
 
     private void tampilkanDataProfil() {
@@ -387,6 +393,7 @@ public class DetailContactActivity extends AppCompatActivity implements LogAdapt
         tvDetailNomor.setText(contact.getNomorTelepon());
         tvDetailEmail.setText((contact.getEmail() != null && !contact.getEmail().isEmpty()) ? contact.getEmail() : "-");
         tvDetailCatatan.setText((contact.getCatatan() != null && !contact.getCatatan().isEmpty()) ? contact.getCatatan() : "-");
+        ImageView imgDetailPhoto = findViewById(R.id.imgDetailPhoto);
         if (contact.getNama() != null) {
             String url = "https://robohash.org/" + contact.getNama().replace(" ", "%20") + "?set=set2&bgset=bg1&size=400x400";
             Glide.with(this).load(url).placeholder(R.drawable.ic_placeholder_photo).circleCrop().into(imgDetailPhoto);
@@ -413,5 +420,33 @@ public class DetailContactActivity extends AppCompatActivity implements LogAdapt
             }
             @Override public void onCancelled(@NonNull DatabaseError error) {}
         });
+    }
+
+    // --- Logic WhatsApp ---
+    private void sendWhatsAppMessage() {
+        if (contact == null || contact.getNomorTelepon().isEmpty()) {
+            Toast.makeText(this, "Nomor tidak tersedia", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String rawNumber = contact.getNomorTelepon().replaceAll("[^0-9]", "");
+        String formattedNumber;
+
+        if (rawNumber.startsWith("0")) {
+            formattedNumber = "62" + rawNumber.substring(1);
+        } else if (rawNumber.startsWith("62")) {
+            formattedNumber = rawNumber;
+        } else {
+            formattedNumber = "62" + rawNumber;
+        }
+
+        try {
+            String url = "https://wa.me/" + formattedNumber;
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(url));
+            startActivity(intent);
+        } catch (Exception e) {
+            Toast.makeText(this, "Aplikasi WhatsApp tidak ditemukan", Toast.LENGTH_LONG).show();
+        }
     }
 }
